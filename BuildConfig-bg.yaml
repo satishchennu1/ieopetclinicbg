@@ -1,0 +1,12 @@
+kind: "BuildConfig"
+apiVersion: "build.openshift.io/v1"
+metadata:
+  name: "ieopetclinic-bluegreen-pipeline"
+spec:
+  source:
+    git:
+      uri: "https://github.com/rajvaranasi/ieopetclinicbg.git"
+  strategy:
+    jenkinsPipelineStrategy:
+      jenkinsfilePath: jenkinsfilebg
+
