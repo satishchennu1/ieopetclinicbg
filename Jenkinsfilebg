@@ -26,8 +26,7 @@ pipeline {
                             sh 'env | sort'
                             echo " Making Sure required CI/CD projects exists"
                             try {
-
-                                openshift.selector("projects",CICD_DEV).exists
+                                //openshift.selector("projects",CICD_DEV).exists
                                 echo "Good! projects ${CICD_DEV} exists"
                             } catch (e) {
                                 error "Missing ${CICD_DEV} exists"
