@@ -1,0 +1,16 @@
+- name: run the build config  on openshift in AWS
+  hosts: localhost
+
+  tasks:
+    - name: login to openshift on AWS 
+      command: oc login --token=ttAzGEmWbdE4fQ2uuP5MxBKS8p83K2lNhE2u01jfI2Q --server=https://api.ocppilot.ocpcontainer.com:6443
+    - name: accessing the project 
+      command: oc project dockerspringpetclinic
+    - name: run the build 
+      command: oc start-build docker-petspring-pipeline
+    - name: login to openshift on Azure 
+      command: oc login --token=0z-kHLxfuBBTRLlEyqhEgaPXIyFOxsDtl7oRDPlI-mM --server=https://api.test.ocpazure.com:6443 
+    - name: accessing the project
+      command: oc project dockerspringpetclinic
+    - name: run the build
+      command: oc start-build docker-petclinic-pipeline 

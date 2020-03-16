@@ -1,0 +1,10 @@
+- name: run the build config  on openshift in AWS
+  hosts: localhost
+
+  tasks:
+    - name: login to openshift on Azure 
+      command: oc login https://api.test.ocpazure.com:6443 -u kubeadmin -p LYoZS-Jd9YQ-n6epd-wNzRq 
+    - name: accessing the project
+      command: oc project dockerspringpetclinic
+    - name: run the build
+      command: oc start-build docker-petclinic-pipeline 
