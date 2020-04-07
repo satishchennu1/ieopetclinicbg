@@ -21,7 +21,10 @@ node("maven") {
               openshift.withCluster() {
                 openshift.withProject() {
                   def dc = openshift.selector('dc', "ieopetclinic")
+                  dc.rollout().latest()
+                  timeout(10) {
                   dc.rollout().status()
+                 }
                 }
               }
             }          
