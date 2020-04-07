@@ -7,7 +7,7 @@ node("maven") {
             
             stage('Build Image'){
               openshift.withCluster(){
-                openshift.withProject(){
+                openshift.withProject(ieopetclinic-web-dev){
                   sh "oc start-build ieopetclinic --from-dir . --follow"  
                 }
               }
