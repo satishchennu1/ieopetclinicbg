@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    options{
+        // set a timeout of 20 minutes for this pipeline
+        timeout(time: 20, unit: 'MINUTES')
+    } //options
+
+    environment {
+        APP_NAME    = "ieopetclinicbg"
+        GIT_REPO    = "https://github.com/rajvaranasi/ieopetclinicbg.git"
+        GIT_BRANCH  = "master"
+        CICD_PRJ    = "ieopetclinicbg-cicd"
+        CICD_DEV    = "${APP_NAME}"+"-dev"
+        CICD_PROD   = "${APP_NAME}"+"-prod"
+        CICD_STAGE  = "${APP_NAME}"+"-staging"
+        SVC_PORT    = 8080
+    }
+
+    stages {
+            stage('CICD Projects'){
+                steps {
+                    echo "Making Sure all the CI/CD Projects exits"
+                    script {
+                        openshift.withcluster() {
+                            echo "Current Pipeline Environment"
+                            sh 'env | sort'
+                            echo " Making Sure required CI/CD projects exists"
+                            try {
+                                //openshift.selector("projects",CICD_DEV).exists
+                                echo "Good! projects ${CICD_DEV} exists"
+                            } catch (e) {
+                                error "Missing ${CICD_DEV} exists"
+                              } //catch 
+                        }
+
+                    } //script 
+
+                } //steps
+
+            } //CICD Projects             
+
+    } //stages 
+
+} //pipeline
