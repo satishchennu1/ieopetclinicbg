@@ -8,6 +8,7 @@ node("maven") {
             stage('Build Image'){
               openshift.withCluster(){
                 openshift.withProject(ieopetclinic-web-dev){
+                  echo "Current Pipeline is in Build Image"
                   sh "oc start-build ieopetclinic --from-dir . --follow"  
                 }
               }
