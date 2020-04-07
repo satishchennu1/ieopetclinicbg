@@ -1,0 +1,127 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The application's http port.
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic
+  spec:
+    ports:
+    - port: 8080
+      targetPort: 8080
+    selector:
+      deploymentConfig: ieopetclinic
+- apiVersion: route.openshift.io/v1
+  id: ieopetclinic-http
+  kind: Route
+  metadata:
+    annotations:
+      description: Route for application's http service.
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic
+  spec:
+    host: ""
+    to:
+      name: ieopetclinic
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ieopetclinic:latest
+    source:
+      contextDir: ""
+      git:
+        ref: master
+        uri: https://github.com/rajvaranasi/ieopetclinic.git
+      type: Git
+    strategy:
+      sourceStrategy:
+        forcePull: true
+        from:
+          kind: ImageStreamTag
+          name: java:latest
+          namespace: openshift
+      type: Source
+    triggers:
+    - github:
+        secret: GqrB2BaJ
+      type: GitHub
+    - generic:
+        secret: cmLjgUEl
+      type: Generic
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic
+  spec:
+    replicas: 1
+    selector:
+      deploymentConfig: ieopetclinic
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: ieopetclinic
+          deploymentConfig: ieopetclinic
+        name: ieopetclinic
+      spec:
+        containers:
+        - env: []
+          image: ieopetclinic
+          imagePullPolicy: Always
+          name: ieopetclinic
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 8443
+            name: https
+            protocol: TCP
+        terminationGracePeriodSeconds: 75
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ieopetclinic
+        from:
+          kind: ImageStreamTag
+          name: ieopetclinic:latest
+      type: ImageChange
+    - type: ConfigChange
+kind: List
+metadata: {}

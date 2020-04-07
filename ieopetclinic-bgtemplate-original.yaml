@@ -1,0 +1,235 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: openjdk-deployment
+metadata:
+  annotation:
+    description: Application template for IEO Spring boot built using Jenkins Pipeline
+    iconClass: icon-java
+    tags: openjdk8,java,xpaas
+    version: 1.2.0
+  name: openjdk-deployment
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The application's http port.
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic-green
+    namespace: ieopetclinic
+  spec:
+    ports:
+    - port: 8080
+      targetPort: 8080
+    selector:
+      deploymentConfig: ieopetclinic
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The application's http port.
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic-blue
+    namespace: ieopetclinic
+  spec:
+    ports:
+    - port: 8080
+      targetPort: 8080
+    selector:
+      deploymentConfig: ieopetclinic
+
+- apiVersion: route.openshift.io/v1
+  id: ieopetclinic-http
+  kind: Route
+  metadata:
+    annotations:
+      description: Route for application's http service.
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic
+  spec:
+    host: ""
+    to:
+      name: ieopetclinic
+- apiVersion: route.openshift.io/v1
+  id: ieopetclinic-http
+  kind: Route
+  metadata:
+    annotations:
+      description: Route for application's http service.
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic-blue
+  spec:
+    host: ""
+    to:
+      name: ieopetclinic-blue
+- apiVersion: route.openshift.io/v1
+  id: ieopetclinic-http
+  kind: Route
+  metadata:
+    annotations:
+      description: Route for application's http service.
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic-green
+  spec:
+    host: ""
+    to:
+      name: ieopetclinic-green
+
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ieopetclinic:latest
+    source:
+      contextDir: ""
+      git:
+        ref: master
+        uri: https://github.com/rajvaranasi/ieopetclinic.git
+      type: Git
+    strategy:
+      sourceStrategy:
+        forcePull: true
+        from:
+          kind: ImageStreamTag
+          name: java:latest
+          namespace: openshift
+      type: Source
+    triggers:
+    - github:
+        secret: GqrB2BaJ
+      type: GitHub
+    - generic:
+        secret: cmLjgUEl
+      type: Generic
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic-blue
+  spec:
+    replicas: 1
+    selector:
+      deploymentConfig: ieopetclinic-blue
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: ieopetclinic
+          deploymentConfig: ieopetclinic-blue
+        name: ieopetclinic-blue
+      spec:
+        containers:
+        - env: []
+          image: ieopetclinic-blue
+          imagePullPolicy: Always
+          name: ieopetclinic-blue
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 8443
+            name: https
+            protocol: TCP
+        terminationGracePeriodSeconds: 75
+	triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ieopetclinic
+        from:
+          kind: ImageStreamTag
+          name: ieopetclinic-blue:latest
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      application: ieopetclinic
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: ieopetclinic-green
+  spec:
+    replicas: 1
+    selector:
+      deploymentConfig: ieopetclinic-green
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: ieopetclinic
+          deploymentConfig: ieopetclinic-green
+        name: ieopetclinic-green
+      spec:
+        containers:
+        - env: []
+          image: ieopetclinic-green
+          imagePullPolicy: Always
+          name: ieopetclinic-green
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 8443
+            name: https
+            protocol: TCP
+        terminationGracePeriodSeconds: 75
+	triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ieopetclinic
+        from:
+          kind: ImageStreamTag
+          name: ieopetclinic-green:latest
+      type: ImageChange
+    - type: ConfigChange
+
+kind: List
+metadata: {}
