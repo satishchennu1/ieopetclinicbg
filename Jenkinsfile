@@ -1,34 +1,33 @@
-pipeline {
-   agent any
-
-   options {
-        // set a timeout of 20 minutes for this pipeline
-        timeout(time: 20, unit: 'MINUTES')
-    } //options
-
-    environment {
-        APP_NAME    = "ieopetclinic"
-        GIT_REPO    = "https://github.com/rajvaranasi/ieopetclinic.git"
-        GIT_BRANCH  = "master"
-
-        CICD_PRJ    = "ieopetclinic-web-build"
-        CICD_DEV    = "ieopetclinic-web-dev"
-        CICD_UAT   = "ieopetclinic-web-uat"
-        CICD_PREPROD  = "ieopetclinic-web-preprod"
-        SVC_PORT    = 8080
-    } //environment
-    
-    node("maven"){
-        stage('checkout code from git'){
-            git url: "https://github.com/rajvaranasi/petspringdocker.git", branch: "master"    
-         }
-
-        stage('Build Image') {
-          openshift.withCluster(){
-            openshift.withProject($CICD_DEV){
-              sh "oc start-build ieopetclinic --from-dir . --follow "
-            } //withProject
-          }//withCluster
+node("maven") {
+          timeout(time: 20,unit: 'MINUTES'){
+            stage('checkout code from git'){ // for display purposes
+              // Get some code from a GitHub repository
+              git url: "https://github.com/rajvaranasi/ieopetclinicbg.git", branch: "master" 
+            }//checkout code stage
+            
+            stage('Build Image'){
+              openshift.withCluster(){
+                openshift.withProject(ieopetclinic-web-dev){
+                  echo "Current Pipeline is in Build Image"
+                  sh "oc start-build ieopetclinic --from-dir . --follow"  
+                }
+              }
+            }
+            stage('Code Coverage using Jacoco') { //
+              archive 'target/*.jar'
+              step([$class: 'JacocoPublisher', execPattern: '**/target/jacoco.exec'])
+             }
+            
+            stage("Deploy to DEVEnvironment") {
+              openshift.withCluster(ieopetclinic-web-dev){
+                openshift.withProject() {
+                  def dc = openshift.selector('dc', "ieopetclinic")
+                  dc.rollout().latest()
+                  timeout(10) {
+                  dc.rollout().status()
+                 }
+                }
+              }
+            }          
+          }
         }
-    }//node(maven)
-} //pipeline 
