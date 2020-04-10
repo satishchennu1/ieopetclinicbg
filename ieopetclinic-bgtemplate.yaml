@@ -10,7 +10,6 @@ items:
       template: openjdk-web-basic-s2i
       xpaas: 1.4.17
     name: ieopetclinic-green
-    namespace: ieopetclinic
   spec:
     ports:
     - port: 8080
@@ -27,7 +26,6 @@ items:
       template: openjdk-web-basic-s2i
       xpaas: 1.4.17
     name: ieopetclinic-blue
-    namespace: ieopetclinic
   spec:
     ports:
     - port: 8080

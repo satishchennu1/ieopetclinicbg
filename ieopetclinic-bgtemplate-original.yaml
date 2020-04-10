@@ -20,13 +20,12 @@ objects:
       template: openjdk-web-basic-s2i
       xpaas: 1.4.17
     name: ieopetclinic-green
-    namespace: ieopetclinic
   spec:
     ports:
     - port: 8080
       targetPort: 8080
     selector:
-      deploymentConfig: ieopetclinic
+      deploymentConfig: ieopetclinic-green
 - apiVersion: v1
   kind: Service
   metadata:
@@ -37,13 +36,12 @@ objects:
       template: openjdk-web-basic-s2i
       xpaas: 1.4.17
     name: ieopetclinic-blue
-    namespace: ieopetclinic
   spec:
     ports:
     - port: 8080
       targetPort: 8080
     selector:
-      deploymentConfig: ieopetclinic
+      deploymentConfig: ieopetclinic-blue
 
 - apiVersion: route.openshift.io/v1
   id: ieopetclinic-http

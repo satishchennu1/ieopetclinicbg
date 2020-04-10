@@ -8,5 +8,5 @@ spec:
       uri: "https://github.com/rajvaranasi/ieopetclinicbg.git"
   strategy:
     jenkinsPipelineStrategy:
-      jenkinsfilePath: jenkinsfilebg
+      jenkinsfilePath: Jenkinsfilebgnew
 
