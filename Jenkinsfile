@@ -141,7 +141,8 @@ pipeline {
                     script {
                         openshift.withCluster() {
                             openshift.withProject("${CICD_UAT}") {
-                                sh "oc project ieopetclinic-web-uat"
+                                #sh "oc project ieopetclinic-web-uat"
+                                sh "oc project ${CICD_UAT}"
                                 sh "oc get route"
                                 sh "oc get route ${UAT_ROUTE_URL} -o jsonpath='{ .spec.to.name }'> activeservice"
                                 activeService = readFile('activeservice').trim()
