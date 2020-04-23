@@ -226,7 +226,7 @@ pipeline {
                                         altTag = "blue"
                                     }//active-service
                                 sh "oc get route ${APP_NAME}-${tag}-preprod -o jsonpath='{ .spec.host }' > routehost"
-                                sh "oc set -n ${CICD_PREPROD} route-backends ${APP_NAME} ${APP_NAME}-${tag}-preprod=100 ${APP_NAME}-${altTag}-preprod=0"
+                                sh "oc set -n ${PREPROD_ROUTE_URL} route-backends ${APP_NAME} ${APP_NAME}-${tag}-preprod=100 ${APP_NAME}-${altTag}-preprod=0"
                                 sh "oc get routes"
                                 
                                 
