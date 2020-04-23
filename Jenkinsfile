@@ -154,7 +154,7 @@ pipeline {
                                 openshift.tag("${CICD_DEV}/${APP_NAME}:latest", "${CICD_UAT}/${APP_NAME}:latest")
                                 openshift.tag("${CICD_UAT}/${APP_NAME}:latest", "${CICD_UAT}/${APP_NAME}-${tag}:latest")
                                 sleep 10
-                                def dc = openshift.selector('dc', "${APP_NAME}-${tag}")
+                                def dc = openshift.selector('dc', "${APP_NAME}-${tag}-uat")
                                 dc.rollout().status()
                                 sleep 20
                             }
