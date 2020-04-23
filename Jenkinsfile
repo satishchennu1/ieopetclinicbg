@@ -145,11 +145,11 @@ pipeline {
                                 sh "oc get route"
                                 sh "oc get route ${UAT_ROUTE_URL} -o jsonpath='{ .spec.to.name }'> activeservice"
                                 activeService = readFile('activeservice').trim()
-                                if (activeService == "${APP_NAME}-blue") {
+                                if (activeService == "${APP_NAME}-blue-uat") {
                                         tag = "green"
                                         altTag = "blue"
                                     }//active-service
-                                sh "oc get route ${APP_NAME}-${tag} -o jsonpath='{ .spec.host }' > routehost"
+                                sh "oc get route ${APP_NAME}-${tag}-uat -o jsonpath='{ .spec.host }' > routehost"
                                 //openshift.tag("${CICD_DEV}/${APP_NAME}:v${BUILD_NUMBER}", "${CICD_UAT}/${APP_NAME}:v${BUILD_NUMBER}")
                                 openshift.tag("${CICD_DEV}/${APP_NAME}:latest", "${CICD_UAT}/${APP_NAME}:latest")
                                 openshift.tag("${CICD_UAT}/${APP_NAME}:latest", "${CICD_UAT}/${APP_NAME}-${tag}:latest")
@@ -176,7 +176,7 @@ pipeline {
                                         altTag = "blue"
                                     }//active-service
                                 sh "oc get route ${APP_NAME}-${tag}-uat -o jsonpath='{ .spec.host }' > routehost"
-                                sh "oc set -n ${CICD_UAT} route-backends ${UAT_ROUTE_URL} ${APP_NAME}-${tag}=100 ${APP_NAME}-${altTag}=0"
+                                sh "oc set -n ${CICD_UAT} route-backends ${UAT_ROUTE_URL} ${APP_NAME}-${tag}-uat=100 ${APP_NAME}-${altTag}-uat=0"
                                 sh "oc get routes"
                             } // project
                         } // cluster
@@ -219,14 +219,14 @@ pipeline {
                         openshift.withCluster() {
                             openshift.withProject("${CICD_PREPROD}")
                             {   
-                                sh "oc get route ${APP_NAME} -o jsonpath='{ .spec.to.name }'> activeservice"
+                                sh "oc get route ${PREPROD_ROUTE_URL} -o jsonpath='{ .spec.to.name }'> activeservice"
                                 activeService = readFile('activeservice').trim()
                                 if (activeService == "${APP_NAME}-blue") {
                                         tag = "green"
                                         altTag = "blue"
                                     }//active-service
-                                sh "oc get route ${APP_NAME}-${tag} -o jsonpath='{ .spec.host }' > routehost"
-                                sh "oc set -n ${CICD_PREPROD} route-backends ${APP_NAME} ${APP_NAME}-${tag}=100 ${APP_NAME}-${altTag}=0"
+                                sh "oc get route ${APP_NAME}-${tag}-preprod -o jsonpath='{ .spec.host }' > routehost"
+                                sh "oc set -n ${CICD_PREPROD} route-backends ${APP_NAME} ${APP_NAME}-${tag}-preprod=100 ${APP_NAME}-${altTag}-preprod=0"
                                 sh "oc get routes"
                                 
                                 
