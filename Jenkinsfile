@@ -128,7 +128,7 @@ pipeline {
                     script {
                         openshift.withCluster() {
                                 openshift.withProject("${CICD_DEV}") {
-                                    echo sh (script: "curl -I http://${APP_NAME}.${CICD_DEV}.apps.testocpaws.ocpawscontainers.com", returnStdout: true)
+                                   #echo sh (script: "curl -I http://${APP_NAME}.${CICD_DEV}.apps.testocpaws.ocpawscontainers.com", returnStdout: true)
                                 } // withProject
                         } // withCluster
                     } // script
@@ -171,11 +171,11 @@ pipeline {
                             {   
                                 sh "oc get route ${UAT_ROUTE_URL} -o jsonpath='{ .spec.to.name }'> activeservice"
                                 activeService = readFile('activeservice').trim()
-                                if (activeService == "${APP_NAME}-blue") {
+                                if (activeService == "${APP_NAME}-blue-uat") {
                                         tag = "green"
                                         altTag = "blue"
                                     }//active-service
-                                sh "oc get route ${APP_NAME}-${tag} -o jsonpath='{ .spec.host }' > routehost"
+                                sh "oc get route ${APP_NAME}-${tag}-uat -o jsonpath='{ .spec.host }' > routehost"
                                 sh "oc set -n ${CICD_UAT} route-backends ${UAT_ROUTE_URL} ${APP_NAME}-${tag}=100 ${APP_NAME}-${altTag}=0"
                                 sh "oc get routes"
                             } // project
@@ -192,13 +192,13 @@ pipeline {
                                 sh "oc project ${CICD_PREPROD}"
                                 echo "routes before the deployment "
                                 sh "oc get route"
-                                sh "oc get route ${APP_NAME} -o jsonpath='{ .spec.to.name }'> activeservice"
+                                sh "oc get route ${PREPROD_ROUTE_URL} -o jsonpath='{ .spec.to.name }'> activeservice"
                                 activeService = readFile('activeservice').trim()
-                                if (activeService == "${APP_NAME}-blue") {
+                                if (activeService == "${APP_NAME}-blue-preprod") {
                                         tag = "green"
                                         altTag = "blue"
                                     }//active-service
-                                sh "oc get route ${APP_NAME}-${tag} -o jsonpath='{ .spec.host }' > routehost"
+                                sh "oc get route ${APP_NAME}-${tag}-preprod -o jsonpath='{ .spec.host }' > routehost"
                                 //openshift.tag("${CICD_DEV}/${APP_NAME}:v${BUILD_NUMBER}", "${CICD_UAT}/${APP_NAME}:v${BUILD_NUMBER}")
                                 openshift.tag("${CICD_UAT}/${APP_NAME}:latest", "${CICD_PREPROD}/${APP_NAME}:latest")
                                 openshift.tag("${CICD_PREPROD}/${APP_NAME}:latest", "${CICD_PREPROD}/${APP_NAME}-${tag}:latest")
