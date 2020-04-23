@@ -113,9 +113,9 @@ pipeline {
                         openshift.withCluster() {
                             openshift.withProject("${CICD_DEV}")
                             {
-                                sleep 30
-                                openshift.selector("dc", "ieopetclinic").rollout().latest();
-                                
+                                sleep 5
+                                def dc = openshift.selector("dc", "ieopetclinic")
+                                dc.rollout().status()                                
                             } // project
                         } // cluster
                     } // script
