@@ -221,12 +221,13 @@ pipeline {
                             {   
                                 sh "oc get route ${PREPROD_ROUTE_URL} -o jsonpath='{ .spec.to.name }'> activeservice"
                                 activeService = readFile('activeservice').trim()
-                                if (activeService == "${APP_NAME}-blue") {
+                                if (activeService == "${APP_NAME}-blue-preprod") {
                                         tag = "green"
                                         altTag = "blue"
                                     }//active-service
                                 sh "oc get route ${APP_NAME}-${tag}-preprod -o jsonpath='{ .spec.host }' > routehost"
-                                sh "oc set -n ${PREPROD_ROUTE_URL} route-backends ${APP_NAME} ${APP_NAME}-${tag}-preprod=100 ${APP_NAME}-${altTag}-preprod=0"
+                                sh "oc set -n ${CICD_UAT} route-backends ${UAT_ROUTE_URL} ${APP_NAME}-${tag}-uat=100 ${APP_NAME}-${altTag}-uat=0"
+                                sh "oc set -n ${CICD_PREPROD} route-backends ${PREPROD_ROUTE_URL} ${APP_NAME}-${tag}-preprod=100 ${APP_NAME}-${altTag}-preprod=0"
                                 sh "oc get routes"
                                 
                                 
