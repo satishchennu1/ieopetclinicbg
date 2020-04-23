@@ -152,7 +152,7 @@ pipeline {
                                 sh "oc get route ${APP_NAME}-${tag}-uat -o jsonpath='{ .spec.host }' > routehost"
                                 //openshift.tag("${CICD_DEV}/${APP_NAME}:v${BUILD_NUMBER}", "${CICD_UAT}/${APP_NAME}:v${BUILD_NUMBER}")
                                 openshift.tag("${CICD_DEV}/${APP_NAME}:latest", "${CICD_UAT}/${APP_NAME}:latest")
-                                openshift.tag("${CICD_UAT}/${APP_NAME}:latest", "${CICD_UAT}/${APP_NAME}-${tag}:latest")
+                                openshift.tag("${CICD_UAT}/${APP_NAME}:latest", "${CICD_UAT}/${APP_NAME}-${tag}-uat:latest")
                                 sleep 10
                                 def dc = openshift.selector('dc', "${APP_NAME}-${tag}-uat")
                                 dc.rollout().status()
@@ -201,9 +201,10 @@ pipeline {
                                 sh "oc get route ${APP_NAME}-${tag}-preprod -o jsonpath='{ .spec.host }' > routehost"
                                 //openshift.tag("${CICD_DEV}/${APP_NAME}:v${BUILD_NUMBER}", "${CICD_UAT}/${APP_NAME}:v${BUILD_NUMBER}")
                                 openshift.tag("${CICD_UAT}/${APP_NAME}:latest", "${CICD_PREPROD}/${APP_NAME}:latest")
-                                openshift.tag("${CICD_PREPROD}/${APP_NAME}:latest", "${CICD_PREPROD}/${APP_NAME}-${tag}:latest")
+                                def dc = openshift.selector('dc', "${APP_NAME}-${tag}-uat")dd
+                                openshift.tag("${CICD_PREPROD}/${APP_NAME}:latest", "${CICD_PREPROD}/${APP_NAME}-${tag}-preprod:latest")
                                 sleep 10
-                                def dc = openshift.selector('dc', "${APP_NAME}-${tag}")
+                                def dc = openshift.selector('dc', "${APP_NAME}-${tag}-preprod")
                                 dc.rollout().status()
                                 sleep 20
                                 
