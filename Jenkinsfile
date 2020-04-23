@@ -9,15 +9,16 @@ pipeline {
         APP_NAME    = "ieopetclinic"
         GIT_REPO    = "https://github.com/rajvaranasi/ieopetclinicbg.git"
         GIT_BRANCH  = "master"
-        UAT_ROUTE_URL = "ieopetclinic-uat"
+        UAT_ROUTE_URL = "ieopetclinic-bluegreen-uat"
+        PREPROD_ROUTE_URL = "ieopetclinic-bluegreen-preprod"
         def tag="blue"
         def altTag="green"
         def verbose="false"
 
-        CICD_PRJ    = "ieopetclinic-web-build"
-        CICD_DEV    = "ieopetclinic-web-dev"
-        CICD_UAT   =  "ieopetclinic-web-uat"
-        CICD_PREPROD  = "ieopetclinic-web-preprod"
+        CICD_PRJ    = "ieopetclinic-bluegreen-cicd"
+        CICD_DEV    = "ieopetclinic-bluegreen-dev"
+        CICD_UAT   =  "ieopetclinic-bluegreen-uat"
+        CICD_PREPROD  = "ieopetclinic-bluegreen-preprod"
         SVC_PORT    = 8080
     } //environment
     
