@@ -206,6 +206,8 @@ pipeline {
                                 openshift.tag("${CICD_PREPROD}/${APP_NAME}-preprod:latest", "${CICD_PREPROD}/${APP_NAME}-${tag}-preprod:latest")
                                 sleep 10
                                 def dc = openshift.selector('dc', "${APP_NAME}-${tag}-preprod")
+                                def dcpreprod = openshift.selector('dc', "${APP_NAME}-preprod")
+                                dcpreprod.rollout().status()
                                 dc.rollout().status()
                                 sleep 20
                                 
