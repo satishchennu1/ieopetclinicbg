@@ -155,9 +155,7 @@ pipeline {
                                 openshift.tag("${CICD_UAT}/${APP_NAME}-uat:latest", "${CICD_UAT}/${APP_NAME}-${tag}-uat:latest")
                                 sleep 10
                                 def dc = openshift.selector('dc', "${APP_NAME}-${tag}-uat")
-                                def dcuat = openshift.selector('dc', "${APP_NAME}-uat")
                                 dc.rollout().status()
-                                dcuat.rollout().status()
                                 sleep 20
                             }
                         }
