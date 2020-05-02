@@ -151,8 +151,8 @@ pipeline {
                                     }//active-service
                                 sh "oc get route ${APP_NAME}-${tag}-uat -o jsonpath='{ .spec.host }' > routehost"
                                 //openshift.tag("${CICD_DEV}/${APP_NAME}:v${BUILD_NUMBER}", "${CICD_UAT}/${APP_NAME}:v${BUILD_NUMBER}")
-                                openshift.tag("${CICD_DEV}/${APP_NAME}:latest", "${CICD_UAT}/${APP_NAME}:latest")
-                                openshift.tag("${CICD_UAT}/${APP_NAME}:latest", "${CICD_UAT}/${APP_NAME}-${tag}-uat:latest")
+                                openshift.tag("${CICD_DEV}/${APP_NAME}:latest", "${CICD_UAT}/${APP_NAME}-uat:latest")
+                                openshift.tag("${CICD_UAT}/${APP_NAME}-uat:latest", "${CICD_UAT}/${APP_NAME}-${tag}-uat:latest")
                                 sleep 10
                                 def dc = openshift.selector('dc', "${APP_NAME}-${tag}-uat")
                                 dc.rollout().status()
@@ -200,8 +200,8 @@ pipeline {
                                     }//active-service
                                 sh "oc get route ${APP_NAME}-${tag}-preprod -o jsonpath='{ .spec.host }' > routehost"
                                 //openshift.tag("${CICD_DEV}/${APP_NAME}:v${BUILD_NUMBER}", "${CICD_UAT}/${APP_NAME}:v${BUILD_NUMBER}")
-                                openshift.tag("${CICD_UAT}/${APP_NAME}:latest", "${CICD_PREPROD}/${APP_NAME}:latest")
-                                openshift.tag("${CICD_PREPROD}/${APP_NAME}:latest", "${CICD_PREPROD}/${APP_NAME}-${tag}-preprod:latest")
+                                openshift.tag("${CICD_UAT}/${APP_NAME}:latest", "${CICD_PREPROD}/${APP_NAME}-preprod:latest")
+                                openshift.tag("${CICD_PREPROD}/${APP_NAME}-preprod:latest", "${CICD_PREPROD}/${APP_NAME}-${tag}-preprod:latest")
                                 sleep 10
                                 def dc = openshift.selector('dc', "${APP_NAME}-${tag}-preprod")
                                 dc.rollout().status()
