@@ -200,7 +200,7 @@ pipeline {
                                     }//active-service
                                 sh "oc get route ${APP_NAME}-${tag}-preprod -o jsonpath='{ .spec.host }' > routehost"
                                 //openshift.tag("${CICD_DEV}/${APP_NAME}:v${BUILD_NUMBER}", "${CICD_UAT}/${APP_NAME}:v${BUILD_NUMBER}")
-                                openshift.tag("${CICD_UAT}/${APP_NAME}:latest", "${CICD_PREPROD}/${APP_NAME}-preprod:latest")
+                                openshift.tag("${CICD_UAT}/${APP_NAME}-uat:latest", "${CICD_PREPROD}/${APP_NAME}-preprod:latest")
                                 openshift.tag("${CICD_PREPROD}/${APP_NAME}-preprod:latest", "${CICD_PREPROD}/${APP_NAME}-${tag}-preprod:latest")
                                 sleep 10
                                 def dc = openshift.selector('dc', "${APP_NAME}-${tag}-preprod")
@@ -226,7 +226,6 @@ pipeline {
                                         altTag = "blue"
                                     }//active-service
                                 sh "oc get route ${APP_NAME}-${tag}-preprod -o jsonpath='{ .spec.host }' > routehost"
-                                sh "oc set -n ${CICD_UAT} route-backends ${UAT_ROUTE_URL} ${APP_NAME}-${tag}-uat=100 ${APP_NAME}-${altTag}-uat=0"
                                 sh "oc set -n ${CICD_PREPROD} route-backends ${PREPROD_ROUTE_URL} ${APP_NAME}-${tag}-preprod=100 ${APP_NAME}-${altTag}-preprod=0"
                                 sh "oc get routes"
                                 
