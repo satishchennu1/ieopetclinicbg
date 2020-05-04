@@ -128,6 +128,7 @@ pipeline {
                     script {
                         openshift.withCluster() {
                                 openshift.withProject("${CICD_DEV}") {
+                                   sleep 5
                                    echo sh (script: "curl http://ieopetclinic-ieopetclinic-bluegreen-dev.apps.ocp43.itblab.uspto.gov", returnStdout: true)
                                 } // withProject
                         } // withCluster
