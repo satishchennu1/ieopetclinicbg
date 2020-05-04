@@ -134,9 +134,24 @@ pipeline {
                     } // script
                 } // steps
             } //stage 
-       stage("approval Message to deploy in UAT") {
-              input message: "Need approval to move to UAT Controlled environment: Approve?", id: "approval"
-             } // closing approval stage
+
+
+        stage('approval Message to deploy in UAT Controlled Environment') {
+
+                steps {
+                    echo "Verify if all Functional Test are passed in DEV and QA certifies the Build"
+                    script {
+                        openshift.withCluster() {
+                                openshift.withProject("${CICD_DEV}") {
+                                  input message: "Need approval to move to UAT Controlled environment: Approve?", id: "approval"
+                                   
+                                } // withProject
+                        } // withCluster
+                    } // script
+                } // steps
+            } //stage
+
+
         
         stage('Promote to UAT') {
                 steps {
