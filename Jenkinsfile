@@ -95,6 +95,20 @@ pipeline {
                     } // script
                 } // steps
             } //stage
+        stage('Code Quality Analysis using Sonar Qube') {
+                steps {
+                    echo "Code Quality using SonarQube Analysis"
+                    script {
+                        openshift.withCluster() {
+                                openshift.withProject() {
+                                  withSonarQubeEnv('SonarQube') { 
+                                    sh "mvn sonar:sonar -Dsonar.host.url=http://sonarqube-sonarqube-persistant.apps.ocp43.itblab.uspto.gov/ -DskipTests=true"
+              }
+                                } // withProject
+                        } // withCluster
+                    } // script
+                } // steps
+            } //stage
         
 
         stage('Build Image ') {
