@@ -208,6 +208,41 @@ pipeline {
                     } // script
                 } // steps
             } //stage-build
+        stage('Smoke Test UATURL') {
+
+                steps {
+                    echo "Testing if 'Service' resource is operational and responding"
+                    script {
+                        openshift.withCluster() {
+                                openshift.withProject("${CICD_UAT}") {
+                                   sleep 30
+                                    sh script: '''response=$(curl --fail -s -o /dev/null -w "%{http_code}\\n" http://ieopetclinic-uat-ieopetclinic-bluegreen-uat.apps.ocp43.itblab.uspto.gov)
+                                    if [ "$response" -ne 200 ]
+                                    then
+                                      exit 1
+                                    fi'''
+
+                                } // withProject
+                        } // withCluster
+                    } // script
+                } // steps
+            } //stage
+
+         stage('Need approval Message to deploy in PREPROD Controlled Environment') {
+
+                steps {
+                    echo "Verify if all Functional Test are passed in UAT  and QA certifies the Build"
+                    script {
+                        openshift.withCluster() {
+                                openshift.withProject("${CICD_UAT}") {
+                                  input message: "Need approval to move to PREPROD Controlled environment: Approve?", id: "approval"
+
+                                } // withProject
+                        } // withCluster
+                    } // script
+                } // steps
+            } //stage
+
         stage('Promote to PREPROD') {
                 steps {
                     echo "Trying to Deploy APP to PREPROD "
