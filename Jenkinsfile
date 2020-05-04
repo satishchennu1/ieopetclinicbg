@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent 'MAVEN' 
     options {
         // set a timeout of 20 min
         //utes for this pipeline
@@ -37,6 +37,21 @@ pipeline {
                     } // script
                 } // steps
             } //stage 
+        stage('compile') {
+
+                steps {
+                    echo "Testing if 'Service' resource is operational and responding"
+                    script {
+                        openshift.withCluster() {
+                                openshift.withProject() {
+                                    echo "-=- compiling project -=-"
+                                    sh "./mvnw clean compile"
+                                } // withProject
+                        } // withCluster
+                    } // script
+                } // steps
+            } //stage
+
         
         stage('Build Image ') {
                 steps {
