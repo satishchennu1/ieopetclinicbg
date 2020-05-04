@@ -129,7 +129,13 @@ pipeline {
                         openshift.withCluster() {
                                 openshift.withProject("${CICD_DEV}") {
                                    sleep 5
-                                   echo sh (script: 'curl -I http://ieopetclinic-ieopetclinic-bluegreen-dev.apps.ocp43.itblab.uspto.gov', returnStdout: true)
+                                   //echo sh (script: 'curl -I http://ieopetclinic-ieopetclinic-bluegreen-dev.apps.ocp43.itblab.uspto.gov', returnStdout: true)
+                                    sh script: '''response=$(curl --fail -s -o /dev/null -w "%{http_code}\\n" http://ieopetclinic-ieopetclinic-bluegreen-dev.apps.ocp43.itblab.uspto.gov)
+                                    if [ "$response" -ne 200 ]
+                                    then
+                                      exit 1
+                                    fi'''
+                                    
                                 } // withProject
                         } // withCluster
                     } // script
