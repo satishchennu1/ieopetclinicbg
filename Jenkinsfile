@@ -128,12 +128,15 @@ pipeline {
                     script {
                         openshift.withCluster() {
                                 openshift.withProject("${CICD_DEV}") {
-                                   //echo sh (script: "curl -I http://${APP_NAME}.${CICD_DEV}.apps.testocpaws.ocpawscontainers.com", returnStdout: true)
+                                   echo sh (script: "curl -I ieopetclinic-ieopetclinic-bluegreen-dev.apps.ocp43.itblab.uspto.gov", returnStdout: true)
                                 } // withProject
                         } // withCluster
                     } // script
                 } // steps
             } //stage 
+       stage("approval Message to deploy in UAT") {
+              input message: "Need approval to move to UAT Controlled environment: Approve?", id: "approval"
+             } // closing approval stage
         
         stage('Promote to UAT') {
                 steps {
