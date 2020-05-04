@@ -102,7 +102,7 @@ pipeline {
                         openshift.withCluster() {
                                 openshift.withProject() {
                                   withSonarQubeEnv('sonarqube') { 
-                                    sh "mvn sonar:sonar -Dsonar.host.url=http://sonarqube-sonarqube-persistant.apps.ocp43.itblab.uspto.gov/ -DskipTests=true"
+                                    sh "mvn sonar:sonar -Dsonar.host.url=https://sonarqube-sonarqube-persistant.apps.ocp43.itblab.uspto.gov/ -DskipTests=true"
               }
                                 } // withProject
                         } // withCluster
