@@ -48,7 +48,7 @@ pipeline {
                         openshift.withCluster() {
                                 openshift.withProject() {
                                     echo "-=- compiling project -=-"
-                                    sh "./mvn clean compile"
+                                    sh "mvn clean package -Popenshift"
                                 } // withProject
                         } // withCluster
                     } // script
