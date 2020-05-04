@@ -121,14 +121,14 @@ pipeline {
                     } // script
                 } // steps
             } //stage-build
-        stage('Test Dev URL') {
+        stage('Smoke Test DEVURL') {
 
                 steps {
                     echo "Testing if 'Service' resource is operational and responding"
                     script {
                         openshift.withCluster() {
                                 openshift.withProject("${CICD_DEV}") {
-                                   sleep 120 
+                                   sleep 30 
                                    //echo sh (script: 'curl -I http://ieopetclinic-ieopetclinic-bluegreen-dev.apps.ocp43.itblab.uspto.gov', returnStdout: true)
                                     sh script: '''response=$(curl --fail -s -o /dev/null -w "%{http_code}\\n" http://ieopetclinic-ieopetclinic-bluegreen-dev.apps.ocp43.itblab.uspto.gov)
                                     if [ "$response" -ne 200 ]
