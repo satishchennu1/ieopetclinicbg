@@ -40,22 +40,63 @@ pipeline {
                     } // script
                 } // steps
             } //stage 
-        stage('compile') {
+        stage('clean workspace') {
 
                 steps {
-                    echo "Testing if 'Service' resource is operational and responding"
                     script {
                         openshift.withCluster() {
                                 openshift.withProject() {
-                                    echo "-=- compiling project -=-"
-                                    sh "mvn clean package -Popenshift"
+                                    echo "-=-Cleaning workspace-=-"
+                                    sh "mvn clean "
                                 } // withProject
                         } // withCluster
                     } // script
                 } // steps
             } //stage
 
+       stage('Unit Test') {
+
+                steps {
+                    script {
+                        openshift.withCluster() {
+                                openshift.withProject() {
+                                    echo "---Unit Test---"
+                                    sh "mvn test"
+                                    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+                                } // withProject
+                        } // withCluster
+                    } // script
+                } // steps
+            } //stage
+      stage('Integration Test') {
+
+                steps {
+                    echo "Testing if 'Service' resource is operational and responding"
+                    script {
+                        openshift.withCluster() {
+                                openshift.withProject() {
+                                    echo "--- IntegrationTest---"
+                                    sh "mvn verify"
+                                } // withProject
+                        } // withCluster
+                    } // script
+                } // steps
+            } //stage
+        stage('Code Coverage using jacoco') {
+                steps {
+                    echo "Code Coverage using jacoco"
+                    script {
+                        openshift.withCluster() {
+                                openshift.withProject() {
+                                    archive 'target/*.jar'
+                                    step([$class: 'JacocoPublisher', execPattern: '**/target/jacoco.exec'])
+                                } // withProject
+                        } // withCluster
+                    } // script
+                } // steps
+            } //stage
         
+
         stage('Build Image ') {
                 steps {
                     echo "Sample Build stage using project ${CICD_DEV}"
@@ -111,19 +152,6 @@ pipeline {
                 } // steps
             } //stage-build
         
-        stage('Code Coverage using jacoco') {
-                steps {
-                    echo "Code Coverage using jacoco"
-                    script {
-                        openshift.withCluster() {
-                                openshift.withProject() {
-                                    archive 'target/*.jar'
-                                    step([$class: 'JacocoPublisher', execPattern: '**/target/jacoco.exec'])
-                                } // withProject
-                        } // withCluster
-                    } // script
-                } // steps
-            } //stage
         stage('Deploy to DEV Project') {
                 steps {
                     echo "Sample Build stage using project ${CICD_DEV}"
