@@ -1,9 +1,8 @@
 pipeline {
-    agent {
-      node {
-        label 'MAVEN' 
-        } //node
-      } //agent
+    tools{
+        maven 'MAVEN'
+    }
+    agent any 
     options {
         // set a timeout of 20 min
         //utes for this pipeline
