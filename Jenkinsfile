@@ -162,7 +162,7 @@ pipeline {
                     } // script
                 } //steps 
             } //stage
-        stage('Route the Live Traffic in UAT') {
+        stage('Switch over Live Traffic to New Version in UAT') {
                 steps {
                     echo "deploying and routing the traffic  ${CICD_UAT}"
                     script {
@@ -212,7 +212,7 @@ pipeline {
                     } // script
                 } //steps 
             } //stage
-        stage('Route the Live Traffic in PREPROD') {
+        stage('Switch over live traffic to  New Version in PREPROD') {
                 steps {
                     echo "deploying and routing the traffic  ${CICD_PREPROD}"
                     script {
